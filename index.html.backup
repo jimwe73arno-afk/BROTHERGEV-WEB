@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brother G EV - Tesla Expert AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            height: 90vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 頭部 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #4ade80;
+            margin-right: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* 對話區域 */
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .message.assistant {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        /* 建議問題 */
+        .suggestions {
+            padding: 10px 20px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .suggestion-chip {
+            display: inline-block;
+            padding: 8px 16px;
+            margin-right: 10px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggestion-chip:hover {
+            background: #e5e7eb;
+            transform: translateY(-2px);
+        }
+
+        /* 輸入區域 */
+        .input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+        }
+
+        #questionInput {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #questionInput:focus {
+            border-color: #667eea;
+        }
+
+        #sendButton {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #sendButton:hover {
+            transform: scale(1.05);
+        }
+
+        #sendButton:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 載入動畫 */
+        .typing-indicator {
+            display: inline-flex;
+            gap: 4px;
+            padding: 15px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 頭部 -->
+        <div class="header">
+            <h1>🚗 Brother G EV</h1>
+            <p><span class="status-indicator"></span>Tesla Expert AI - Powered by Netlify</p>
+        </div>
+
+        <!-- 對話區域 -->
+        <div class="chat-area" id="chatArea">
+            <!-- 歡迎消息 -->
+            <div class="message assistant">
+                <div class="message-bubble">
+                    <strong>Welcome! 👋</strong><br>
+                    I'm your Tesla expert. Ask me anything about Tesla electric vehicles!
+                    <div class="message-time">Just now</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 建議問題 -->
+        <div class="suggestions" id="suggestions">
+            <span class="suggestion-chip" onclick="askSuggestion('Model 3 vs Model Y')">Model 3 vs Model Y</span>
+            <span class="suggestion-chip" onclick="askSuggestion('Tesla insurance cost')">Insurance Cost</span>
+            <span class="suggestion-chip" onclick="askSuggestion('Winter range loss')">Winter Range</span>
+            <span class="suggestion-chip" onclick="askSuggestion('Home charging setup')">Home Charging</span>
+            <span class="suggestion-chip" onclick="askSuggestion('Maintenance cost')">Maintenance</span>
+        </div>
+
+        <!-- 輸入區域 -->
+        <div class="input-area">
+            <input 
+                type="text" 
+                id="questionInput" 
+                placeholder="Ask about Tesla..."
+                onkeypress="handleKeyPress(event)"
+            >
+            <button id="sendButton" onclick="sendQuestion()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/.netlify/functions/ask';
+        const chatArea = document.getElementById('chatArea');
+        const questionInput = document.getElementById('questionInput');
+        const sendButton = document.getElementById('sendButton');
+
+        // 添加用戶消息
+        function addUserMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user';
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    ${text}
+                    <div class="message-time">${getCurrentTime()}</div>
+                </div>
+            `;
+            chatArea.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        // 添加助手消息
+        function addAssistantMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message assistant';
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    ${formatAnswer(text)}
+                    <div class="message-time">${getCurrentTime()}</div>
+                </div>
+            `;
+            chatArea.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        // 顯示載入動畫
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'message assistant';
+            typingDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            chatArea.appendChild(typingDiv);
+            scrollToBottom();
+        }
+
+        // 移除載入動畫
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // 格式化答案
+        function formatAnswer(text) {
+            // 將【】格式轉換為加粗
+            text = text.replace(/【([^】]+)】/g, '<strong>$1:</strong>');
+            // 添加換行
+            text = text.replace(/【/g, '<br><strong>').replace(/】/g, ':</strong> ');
+            return text;
+        }
+
+        // 獲取當前時間
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        }
+
+        // 滾動到底部
+        function scrollToBottom() {
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        // 發送問題
+        async function sendQuestion() {
+            const question = questionInput.value.trim();
+            if (!question) return;
+
+            // 添加用戶消息
+            addUserMessage(question);
+            questionInput.value = '';
+            
+            // 禁用輸入
+            questionInput.disabled = true;
+            sendButton.disabled = true;
+            
+            // 顯示載入動畫
+            showTypingIndicator();
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ q: question })
+                });
+
+                const data = await response.json();
+                
+                // 隱藏載入動畫
+                hideTypingIndicator();
+                
+                // 添加回答
+                if (data.answer) {
+                    addAssistantMessage(data.answer);
+                } else {
+                    addAssistantMessage('Sorry, I couldn\'t process your question. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                hideTypingIndicator();
+                addAssistantMessage('Oops! Something went wrong. Please try again later.');
+            } finally {
+                // 重新啟用輸入
+                questionInput.disabled = false;
+                sendButton.disabled = false;
+                questionInput.focus();
+            }
+        }
+
+        // 建議問題點擊
+        function askSuggestion(question) {
+            questionInput.value = question;
+            sendQuestion();
+        }
+
+        // Enter 鍵發送
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendQuestion();
+            }
+        }
+
+        // 頁面載入時自動聚焦
+        window.onload = function() {
+            questionInput.focus();
+        };
+    </script>
+</body>
+</html>

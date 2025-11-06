@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brother G EV - Master Your Tesla Journey</title>
+    
+    <!-- Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-cyan: #00B5D8;
+            --light-cyan: #E6F7FA;
+            --dark-cyan: #0088A3;
+            --text-dark: #1A202C;
+            --text-gray: #718096;
+            --border-gray: #E2E8F0;
+            --bg-white: #FFFFFF;
+            --success-green: #48BB78;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: var(--bg-white);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* ========== Navigation ========== */
+        nav {
+            background: white;
+            border-bottom: 1px solid var(--border-gray);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-cyan);
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-cyan);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-cyan);
+        }
+
+        .logout-btn {
+            background: transparent;
+            color: var(--text-gray);
+            border: 1px solid var(--border-gray);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+
+        /* ========== Login Screen ========== */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--light-cyan) 0%, white 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .login-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-card h1 {
+            color: var(--primary-cyan);
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .login-card p {
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+        }
+
+        #googleSignInButton {
+            margin: 2rem auto;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ========== Main Container ========== */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ========== Hero Section ========== */
+        .hero {
+            text-align: center;
+            padding: 3rem 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--light-cyan);
+            color: var(--primary-cyan);
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* ========== Chat Container ========== */
+        .chat-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            margin-top: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .messages-container {
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #F7FAFC;
+            border-radius: 12px;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            max-width: 85%;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            background: var(--primary-cyan);
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.assistant {
+            background: white;
+            color: var(--text-dark);
+            border: 1px solid var(--border-gray);
+        }
+
+        .message-content {
+            line-height: 1.5;
+        }
+
+        /* ========== Input Area ========== */
+        .input-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--border-gray);
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 0 3px var(--light-cyan);
+        }
+
+        .send-btn {
+            background: var(--primary-cyan);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: var(--dark-cyan);
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            background: #CBD5E0;
+            cursor: not-allowed;
+        }
+
+        /* ========== Quick Questions ========== */
+        .quick-questions {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-gray);
+        }
+
+        .quick-questions h3 {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .question-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .chip {
+            background: var(--light-cyan);
+            color: var(--primary-cyan);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chip:hover {
+            background: var(--primary-cyan);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* ========== Loading ========== */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .input-container {
+                flex-direction: column;
+            }
+
+            .send-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- V28.0 登入畫面 -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <div class="logo-icon">🚗</div>
+            <h1>Brother G EV</h1>
+            <p>Master Your Tesla Journey</p>
+            <p style="font-size: 0.9rem; margin-bottom: 2rem;">
+                使用 Google 帳號登入<br>
+                開始你的 Tesla 決策之旅
+            </p>
+            <div id="googleSignInButton"></div>
+            <p style="font-size: 0.8rem; color: var(--text-gray); margin-top: 2rem;">
+                免費版：每天 10 題<br>
+                Plaid 專業版：無限提問
+            </p>
+        </div>
+    </div>
+
+    <!-- 主應用（登入後顯示） -->
+    <div id="mainApp" class="hidden">
+        <!-- Navigation -->
+        <nav>
+            <div class="nav-container">
+                <div class="logo" onclick="showSection('explore')">
+                    <span class="logo-icon">🚗</span>
+                    <span>Brother G EV</span>
+                </div>
+                <div class="nav-links">
+                    <a onclick="showSection('explore')" class="active">Explore</a>
+                    <a onclick="showSection('pricing')">Pricing</a>
+                    <a onclick="showSection('faq')">FAQ</a>
+                    <div class="user-info">
+                        <img id="userAvatar" class="user-avatar" alt="User" />
+                        <button class="logout-btn" onclick="handleLogout()">登出</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-container">
+            <!-- Explore Section -->
+            <div id="explore-section">
+                <div class="hero">
+                    <h1>Master Your Tesla Journey</h1>
+                    <p class="hero-subtitle">全球首創 3 秒 AI 決策引擎</p>
+                    <span class="hero-badge">✨ V28.0 - Google Auth + Gemini AI</span>
+                </div>
+
+                <div class="chat-container">
+                    <div class="messages-container" id="messages"></div>
+
+                    <div class="input-container">
+                        <input 
+                            type="text" 
+                            id="userInput" 
+                            placeholder="問我任何關於 Tesla 的問題..."
+                            onkeypress="if(event.key==='Enter') sendMessage()"
+                        />
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                            Send
+                        </button>
+                    </div>
+
+                    <div class="quick-questions">
+                        <h3>💡 快速問題</h3>
+                        <div class="question-chips">
+                            <span class="chip" onclick="askQuestion('Model 3 vs Model Y')">Model 3 vs Model Y</span>
+                            <span class="chip" onclick="askQuestion('保險費用')">保險費用</span>
+                            <span class="chip" onclick="askQuestion('冬天續航')">冬天續航</span>
+                            <span class="chip" onclick="askQuestion('充電費用')">充電費用</span>
+                            <span class="chip" onclick="askQuestion('保養成本')">保養成本</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== V28.0 Google OAuth 配置 ==========
+        const GOOGLE_CLIENT_ID = '234402937661-fq9fi4m3f0ak4salr8gvpg309v291kbl.apps.googleusercontent.com';
+        const API_URL = '/.netlify/functions/ask';
+        
+        let userIdToken = null;
+        let userProfile = null;
+        let conversationHistory = [];
+
+        // ========== V28.0 初始化 Google Sign-In ==========
+        function initializeGoogleSignIn() {
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleSignIn
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById('googleSignInButton'),
+                { 
+                    theme: 'outline', 
+                    size: 'large',
+                    text: 'signin_with',
+                    width: 280
+                }
+            );
+        }
+
+        // ========== V28.0 處理 Google 登入回調 ==========
+        function handleGoogleSignIn(response) {
+            userIdToken = response.credential;
+            
+            // 解析 JWT token 獲取用戶信息
+            const payload = parseJwt(userIdToken);
+            userProfile = {
+                email: payload.email,
+                name: payload.name,
+                picture: payload.picture
+            };
+
+            console.log('[V28.0] 登入成功:', userProfile.email);
+
+            // 顯示主應用
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+
+            // 設置用戶頭像
+            document.getElementById('userAvatar').src = userProfile.picture;
+
+            // 顯示歡迎消息
+            addMessage('assistant', `嗨 ${userProfile.name}！我是 Brother G，你的 Tesla 決策夥伴。有什麼想了解的嗎？`);
+        }
+
+        // ========== 解析 JWT Token ==========
+        function parseJwt(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        // ========== 登出 ==========
+        function handleLogout() {
+            if (confirm('確定要登出嗎？')) {
+                userIdToken = null;
+                userProfile = null;
+                conversationHistory = [];
+                
+                document.getElementById('mainApp').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('messages').innerHTML = '';
+                
+                console.log('[V28.0] 已登出');
+            }
+        }
+
+        // ========== V28.0 發送消息（含 Google Token） ==========
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const query = input.value.trim();
+
+            if (!query) return;
+            if (!userIdToken) {
+                alert('請先登入');
+                return;
+            }
+
+            // 禁用輸入
+            input.disabled = true;
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<span class="loading"></span>';
+
+            // 顯示用戶消息
+            addMessage('user', query);
+            input.value = '';
+
+            // V27.0: 加入對話歷史
+            conversationHistory.push({
+                role: 'user',
+                parts: query
+            });
+
+            try {
+                // V28.0: 傳送 Google Token
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userIdToken}` // V28.0 關鍵
+                    },
+                    body: JSON.stringify({
+                        q: query,
+                        history: conversationHistory // V27.0 關鍵
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    addMessage('assistant', data.answer);
+                    
+                    // V27.0: 更新對話歷史
+                    conversationHistory.push({
+                        role: 'model',
+                        parts: data.answer
+                    });
+
+                    console.log(`[V28.0] RAG Hit: ${data.rag_hit}, Prompt: ${data.prompt_type}`);
+                } else if (data.needLogin) {
+                    alert('登入已過期，請重新登入');
+                    handleLogout();
+                } else {
+                    addMessage('assistant', '抱歉，發生錯誤：' + data.message);
+                }
+            } catch (error) {
+                console.error('[V28.0] API 錯誤:', error);
+                addMessage('assistant', '抱歉，無法連接到服務器。請稍後再試。');
+            } finally {
+                input.disabled = false;
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send';
+                input.focus();
+            }
+        }
+
+        // ========== 添加消息 ==========
+        function addMessage(role, content) {
+            const messagesContainer = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.innerHTML = `<div class="message-content">${content}</div>`;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // ========== 快速問題 ==========
+        function askQuestion(question) {
+            document.getElementById('userInput').value = question;
+            sendMessage();
+        }
+
+        // ========== 頁面切換 ==========
+        function showSection(section) {
+            console.log('切換到:', section);
+        }
+
+        // ========== 初始化 ==========
+        window.onload = function() {
+            initializeGoogleSignIn();
+        };
+    </script>
+</body>
+</html>

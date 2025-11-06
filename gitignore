@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.npm/
+.pnp/
+.pnp.js
+
+# Production
+.netlify/
+build/
+dist/
+
+# Environment Variables (重要！不要上傳密鑰)
+.env
+.env.local
+.env.production
+.env.development
+
+# 敏感憑證 (絕對不要上傳！)
+*.json
+!package.json
+!package-lock.json
+credentials.json
+serviceAccount.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+coverage/
+
+# Misc
+*.csv
+!snippets.csv
