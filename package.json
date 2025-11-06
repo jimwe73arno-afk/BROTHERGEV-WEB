@@ -1,10 +1,19 @@
 {
   "name": "brothergev-website",
-  "version": "1.0.0",
+  "version": "32.0.0",
+  "description": "Brother G EV - Tesla Decision Advisor (Pure Gemini API)",
+  "type": "module",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build required'",
+    "deploy": "netlify deploy --prod"
+  },
   "dependencies": {
-    "@google-cloud/vertexai": "^1.10.0",
-    "csv-parse": "^6.1.0",
-    "google-auth-library": "^10.5.0",
-    "node-fetch": "^2.7.0"
+    "@google/generative-ai": "^0.21.0",
+    "google-auth-library": "^9.14.2",
+    "csv-parse": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
