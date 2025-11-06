@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brother G EV - Master Your Tesla Journey</title>
+    
+    <!-- Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #00BCD4;
+            --primary-dark: #0097A7;
+            --primary-light: #B2EBF2;
+            --text-dark: #212121;
+            --text-light: #757575;
+            --bg-light: #FAFAFA;
+            --white: #FFFFFF;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-lg: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #E0F7FA 0%, #FFFFFF 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+        
+        /* ==================== 導航欄 ==================== */
+        .navbar {
+            background: var(--white);
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+        
+        #loginBtn {
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        #loginBtn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .logout-btn {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--text-light);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        /* ==================== 登入頁面 ==================== */
+        #loginPage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .login-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: var(--shadow-lg);
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .login-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .login-card h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+        
+        .login-card .subtitle {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .login-description {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .login-description p {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .login-description p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .google-signin-button {
+            width: 100%;
+            background: var(--white);
+            border: 2px solid var(--primary-color);
+            color: var(--text-dark);
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all 0.3s;
+        }
+        
+        .google-signin-button:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .quota-info {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #FFF3E0;
+            border-radius: 12px;
+            color: #E65100;
+            font-size: 0.9rem;
+        }
+        
+        /* ==================== 主應用頁面 ==================== */
+        #mainApp {
+            display: none;
+            padding-top: 80px;
+        }
+        
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .hero-section {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-section h1 {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .hero-section .tagline {
+            font-size: 1.2rem;
+            color: var(--text-light);
+        }
+        
+        .hero-section .tagline .highlight {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        /* ==================== 快速問題 ==================== */
+        .quick-questions {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .quick-questions h2 {
+            font-size: 1.3rem;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .question-btn {
+            background: var(--bg-light);
+            border: 2px solid transparent;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+        }
+        
+        .question-btn:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        /* ==================== 對話區域 ==================== */
+        .chat-section {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-header h2 {
+            font-size: 1.3rem;
+        }
+        
+        .chat-status {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        #chatMessages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .message {
+            display: flex;
+            gap: 1rem;
+            max-width: 85%;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .message.user .message-avatar {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .message.assistant .message-avatar {
+            background: var(--bg-light);
+        }
+        
+        .message-content {
+            background: var(--bg-light);
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            line-height: 1.6;
+        }
+        
+        .message.user .message-content {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .message-content p {
+            margin-bottom: 0.5rem;
+        }
+        
+        .message-content p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 1rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+        
+        .chat-input-area {
+            padding: 1.5rem;
+            background: var(--bg-light);
+            border-top: 1px solid #E0E0E0;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        #userInput {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 24px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+        
+        #userInput:focus {
+            border-color: var(--primary-color);
+        }
+        
+        #sendBtn {
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        #sendBtn:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+        
+        #sendBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* ==================== 響應式設計 ==================== */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .nav-link {
+                display: none;
+            }
+            
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-section {
+                height: 500px;
+            }
+            
+            .message {
+                max-width: 95%;
+            }
+        }
+        
+        /* ==================== 載入動畫 ==================== */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--primary-light);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">⚡</span>
+                <span>Brother G EV</span>
+            </a>
+            <div class="nav-links">
+                <a href="#" class="nav-link">Explore</a>
+                <a href="#" class="nav-link">Pricing</a>
+                <a href="#" class="nav-link">FAQ</a>
+                <button id="loginBtn">使用 Google 登入</button>
+                <div class="user-info" id="userInfo">
+                    <img src="" alt="User Avatar" class="user-avatar" id="userAvatar">
+                    <span id="userName"></span>
+                    <button class="logout-btn" onclick="handleLogout()">登出</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 登入頁面 -->
+    <div id="loginPage">
+        <div class="login-card">
+            <div class="login-icon">⚡</div>
+            <h1>Brother G EV</h1>
+            <p class="subtitle">Master Your Tesla Journey</p>
+            
+            <div class="login-description">
+                <p><strong>🎯 專業 AI 決策顧問</strong></p>
+                <p>✓ 3 秒內精準回答 Tesla 購買疑問</p>
+                <p>✓ 基於真實車主經驗的專業建議</p>
+                <p>✓ 協助您做出最佳購車決策</p>
+            </div>
+            
+            <button class="google-signin-button" onclick="handleLogin()">
+                <svg width="24" height="24" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                使用 Google 帳號登入
+            </button>
+            
+            <div class="quota-info">
+                <strong>🎁 免費額度</strong>：每天 10 題 | <strong>💎 專業方案</strong>：無限提問
+            </div>
+        </div>
+    </div>
+
+    <!-- 主應用頁面 -->
+    <div id="mainApp">
+        <div class="app-container">
+            <!-- Hero Section -->
+            <div class="hero-section">
+                <h1>Master Your Tesla Journey</h1>
+                <p class="tagline">專業 AI 決策顧問 · <span class="highlight">3 秒精準回應</span></p>
+            </div>
+
+            <!-- 五大疑問 -->
+            <div class="quick-questions">
+                <h2>💡 五大熱門疑問 (Top 5 Questions)</h2>
+                <div class="question-grid">
+                    <button class="question-btn" onclick="askQuestion('Model 3 和 Model Y 該選哪一台？')">
+                        🚗 Model 3 vs Model Y 該選哪一台？
+                    </button>
+                    <button class="question-btn" onclick="askQuestion('Tesla 保險費用大概多少？')">
+                        💰 保險費用大概多少？
+                    </button>
+                    <button class="question-btn" onclick="askQuestion('Tesla 充電方便嗎？')">
+                        🔌 充電方便嗎？
+                    </button>
+                    <button class="question-btn" onclick="askQuestion('冬天續航會掉很多嗎？')">
+                        ❄️ 冬天續航會掉很多嗎？
+                    </button>
+                    <button class="question-btn" onclick="askQuestion('FSD 自動駕駛值得買嗎？')">
+                        🤖 FSD 自動駕駛值得買嗎？
+                    </button>
+                </div>
+            </div>
+
+            <!-- 對話區域 -->
+            <div class="chat-section">
+                <div class="chat-header">
+                    <h2>💬 與 Brother G 對話</h2>
+                    <div class="chat-status">● 在線</div>
+                </div>
+                
+                <div id="chatMessages">
+                    <div class="message assistant">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <p>嗨！我是 Brother G，你的 Tesla 決策顧問 🚗⚡</p>
+                            <p>有任何關於 Tesla 購買的問題，隨時問我！我會用最實際的經驗幫你解答 😊</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typingIndicator">
+                    Brother G 正在輸入 <span class="loading"></span>
+                </div>
+                
+                <div class="chat-input-area">
+                    <div class="input-container">
+                        <input 
+                            type="text" 
+                            id="userInput" 
+                            placeholder="詢問任何關於 Tesla 的問題..."
+                            onkeypress="if(event.key==='Enter') sendMessage()"
+                        />
+                        <button id="sendBtn" onclick="sendMessage()">
+                            ➤
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 全局變數 ====================
+        let currentUser = null;
+        let conversationHistory = [];
+        const API_ENDPOINT = '/.netlify/functions/ask';
+        
+        // Google Client ID
+        const GOOGLE_CLIENT_ID = '234402937661-fq9fi4m3f0ak4salr8gvpg309v291kbl.apps.googleusercontent.com';
+        
+        // ==================== 初始化 ====================
+        window.onload = function() {
+            // 初始化 Google Sign-In
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleCredentialResponse
+            });
+            
+            // 檢查是否已登入
+            checkLoginStatus();
+        };
+        
+        // ==================== 登入處理 ====================
+        function handleLogin() {
+            google.accounts.id.prompt();
+        }
+        
+        function handleCredentialResponse(response) {
+            // 解碼 JWT token
+            const responsePayload = parseJwt(response.credential);
+            
+            currentUser = {
+                id: responsePayload.sub,
+                email: responsePayload.email,
+                name: responsePayload.name,
+                picture: responsePayload.picture,
+                token: response.credential
+            };
+            
+            // 儲存到 sessionStorage
+            sessionStorage.setItem('user', JSON.stringify(currentUser));
+            
+            // 顯示主應用
+            showMainApp();
+        }
+        
+        function parseJwt(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+        
+        function checkLoginStatus() {
+            const savedUser = sessionStorage.getItem('user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showMainApp();
+            } else {
+                showLoginPage();
+            }
+        }
+        
+        function showMainApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('loginBtn').style.display = 'none';
+            
+            // 顯示用戶資訊
+            const userInfo = document.getElementById('userInfo');
+            userInfo.style.display = 'flex';
+            document.getElementById('userAvatar').src = currentUser.picture;
+            document.getElementById('userName').textContent = currentUser.name;
+        }
+        
+        function showLoginPage() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('loginBtn').style.display = 'block';
+            document.getElementById('userInfo').style.display = 'none';
+        }
+        
+        function handleLogout() {
+            currentUser = null;
+            conversationHistory = [];
+            sessionStorage.removeItem('user');
+            showLoginPage();
+        }
+        
+        // ==================== 對話處理 ====================
+        function askQuestion(question) {
+            document.getElementById('userInput').value = question;
+            sendMessage();
+        }
+        
+        async function sendMessage() {
+            if (!currentUser) {
+                alert('請先登入！');
+                return;
+            }
+            
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // 清空輸入框
+            input.value = '';
+            
+            // 顯示用戶消息
+            addMessage('user', message);
+            
+            // 顯示輸入中指示
+            showTypingIndicator();
+            
+            // 禁用發送按鈕
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            
+            try {
+                // 調用 API
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentUser.token}`
+                    },
+                    body: JSON.stringify({
+                        q: message,
+                        history: conversationHistory
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // 顯示助手回覆
+                    addMessage('assistant', data.answer);
+                    
+                    // 更新對話歷史
+                    conversationHistory.push({
+                        role: 'user',
+                        content: message
+                    });
+                    conversationHistory.push({
+                        role: 'assistant',
+                        content: data.answer
+                    });
+                    
+                    // 只保留最近 6 輪對話（3 輪問答）
+                    if (conversationHistory.length > 6) {
+                        conversationHistory = conversationHistory.slice(-6);
+                    }
+                } else {
+                    // 錯誤處理
+                    addMessage('assistant', `抱歉，發生錯誤：${data.message || '未知錯誤'}`);
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                addMessage('assistant', '抱歉，連接伺服器時發生錯誤。請稍後再試。');
+            } finally {
+                hideTypingIndicator();
+                sendBtn.disabled = false;
+                input.focus();
+            }
+        }
+        
+        function addMessage(role, content) {
+            const messagesDiv = document.getElementById('chatMessages');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = role === 'user' ? '👤' : '🤖';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            // 處理換行
+            const paragraphs = content.split('\n').filter(p => p.trim());
+            paragraphs.forEach(p => {
+                const pElement = document.createElement('p');
+                pElement.textContent = p;
+                contentDiv.appendChild(pElement);
+            });
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(contentDiv);
+            messagesDiv.appendChild(messageDiv);
+            
+            // 滾動到底部
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'block';
+        }
+        
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
